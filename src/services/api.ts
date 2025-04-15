@@ -7,6 +7,7 @@ const api = axios.create({
   },
 });
 
+// Adiciona o token em todas as requisições
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -18,13 +19,11 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Intercepta as respostas para tratar erros
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      window.location.href = "/login";
-    }
+    // Deixe o tratamento de erro para ser feito nos componentes
     return Promise.reject(error);
   }
 );

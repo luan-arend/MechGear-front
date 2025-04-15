@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import DashboardLayout from "@/components/DashboardLayout";
 import {
   Table,
@@ -93,7 +93,7 @@ interface Customer {
 }
 
 const Customers = () => {
-  const { user } = useAuth(); // Certifique-se de que o contexto de autenticação está funcionando
+  const { user } = useAuth();
 
   if (!user) {
     return <Navigate to="/login" replace />; // Redireciona para login se o usuário não estiver autenticado
@@ -134,11 +134,14 @@ const Customers = () => {
     try {
       setIsLoading(true);
       const response = await api.get('/customers');
-      console.log('API Response:', response.data); // Log para verificar a resposta
-      setCustomers(response.data.content); // Acesse a propriedade "content"
-    } catch (error) {
-      console.error("Error fetching customers:", error);
-      toast.error("Erro ao carregar clientes");
+      setCustomers(response.data.content);
+    } catch (error: any) {
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        toast.error(`Erro ao carregar clientes: ${errorData.error || "Ocorreu um erro ao carregar os clientes."}`);
+      } else {
+        toast.error("Erro ao carregar clientes: Ocorreu um erro inesperado ao carregar os clientes.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -205,7 +208,7 @@ const Customers = () => {
   const onSubmit = async (data: CustomerFormValues) => {
     try {
       const customerData = {
-        id: selectedCustomer?.id, // Inclui o ID no corpo da requisição
+        id: selectedCustomer?.id,
         name: data.nome,
         cpfCnpj: data.documento,
         phone: data.telefone,
@@ -222,19 +225,22 @@ const Customers = () => {
       };
 
       if (isEditing) {
-        // Envia o ID no corpo da requisição
         await api.put(`/customers`, customerData);
-        toast.success("Cliente atualizado com sucesso!");
+        toast.success(`O cliente ${data.nome} foi atualizado com sucesso.`);
       } else {
         await api.post(`/customers`, customerData);
-        toast.success("Cliente criado com sucesso!");
+        toast.success(`O cliente ${data.nome} foi criado com sucesso.`);
       }
 
       fetchCustomers();
       setCreateEditSheetOpen(false);
-    } catch (error) {
-      console.error("Error saving customer:", error);
-      toast.error(isEditing ? "Erro ao atualizar cliente" : "Erro ao criar cliente");
+    } catch (error: any) {
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        toast.error(errorData.error || "Ocorreu um erro ao salvar o cliente.");
+      } else {
+        toast.error("Ocorreu um erro inesperado ao salvar o cliente.");
+      }
     }
   };
   
@@ -242,14 +248,17 @@ const Customers = () => {
     try {
       if (selectedCustomer) {
         await api.delete(`/customers/${selectedCustomer.id}`);
-        toast.success("Cliente excluído com sucesso!");
+        toast.success(`O cliente ${selectedCustomer.name} foi excluído com sucesso.`);
         fetchCustomers();
       }
-    } catch (error) {
-      console.error("Error deleting customer:", error);
-      toast.error("Erro ao excluir cliente");
-    } finally {
       setDeleteDialogOpen(false);
+    } catch (error: any) {
+      if (error.response?.data) {
+        const errorData = error.response.data;
+        toast.error(errorData.error || "Ocorreu um erro ao excluir o cliente.");
+      } else {
+        toast.error("Ocorreu um erro inesperado ao excluir o cliente.");
+      }
     }
   };
 
@@ -478,6 +487,20 @@ const Customers = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
+                      name="cep"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>CEP</FormLabel>
+                          <FormControl>
+                            <Input placeholder="00000-000" {...field} className="border-accent-200 focus-visible:ring-accent-500" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
                       name="logradouro"
                       render={({ field }) => (
                         <FormItem>
@@ -546,19 +569,6 @@ const Customers = () => {
                       )}
                     />
                     
-                    <FormField
-                      control={form.control}
-                      name="cep"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>CEP</FormLabel>
-                          <FormControl>
-                            <Input placeholder="00000-000" {...field} className="border-accent-200 focus-visible:ring-accent-500" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
                   </div>
                 </div>
                 

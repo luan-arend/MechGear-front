@@ -1,5 +1,7 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap');
+@import 'primereact/resources/themes/lara-light-indigo/theme.css';
+@import 'primereact/resources/primereact.min.css';
+@import 'primeicons/primeicons.css';
 
 @tailwind base;
 @tailwind components;
@@ -93,6 +95,7 @@
   }
 
   body {
+    font-family: 'Roboto', sans-serif; /* Atualize a fonte aqui */
     @apply bg-background text-foreground;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
   }
@@ -129,4 +132,85 @@
   .text-gradient {
     @apply bg-gradient-to-r from-accent-500 to-accent-700 bg-clip-text text-transparent;
   }
+}
+
+.p-toast {
+  opacity: 0.1 !important;
+  z-index: 9999;
+}
+
+.p-toast-message {
+  margin: 0 0 1rem 0;
+}
+
+.p-toast-message-success {
+  background: #dcfce7 !important;
+  border: solid #22c55e !important;
+  border-width: 0 0 0 6px !important;
+  color: #166534 !important;
+}
+
+.p-toast-message-error {
+  background: #fee2e2 !important;
+  border: solid #ef4444 !important;
+  border-width: 0 0 0 6px !important;
+  color: #991b1b !important;
+}
+
+.p-toast-message-info {
+  background: #dbeafe !important;
+  border: solid #3b82f6 !important;
+  border-width: 0 0 0 6px !important;
+  color: #1e40af !important;
+}
+
+.p-toast-message-warn {
+  background: #fef3c7 !important;
+  border: solid #f59e0b !important;
+  border-width: 0 0 0 6px !important;
+  color: #92400e !important;
+}
+
+/* Estilo personalizado para o react-toastify */
+.Toastify__toast {
+  font-family: 'Roboto', sans-serif; /* Fonte consistente */
+  font-size: 0.875rem; /* Tamanho da fonte (14px) */
+  line-height: 1.25rem; /* Espaçamento entre linhas */
+  color: var(--foreground); /* Cor do texto */
+  background-color: var(--card); /* Fundo do toast */
+  border: 1px solid var(--border); /* Borda */
+  border-radius: var(--radius); /* Bordas arredondadas */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+
+.Toastify__toast--success {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.Toastify__toast--error {
+  border-color: var(--destructive);
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+.Toastify__toast--info {
+  border-color: var(--accent);
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.Toastify__toast--warning {
+  border-color: var(--muted);
+  background-color: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.Toastify__close-button {
+  color: var(--foreground); /* Cor do botão de fechar */
+}
+
+.Toastify__progress-bar {
+  background-color: var(--ring); /* Cor da barra de progresso */
 }
